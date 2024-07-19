@@ -10,4 +10,7 @@ go run cmd/balance-tracker/main.go
 ```
 API_KEY=11111111111111111111111111111111
 PORT=8080
+ENV=prod
 ```
+The ENV parameter is optional, it can be local, dev or prod (default value - prod).<br>
+The PORT parameter is optional (default value - 8080)
