@@ -24,7 +24,7 @@ func LoadEnvFile(filename string) error {
 
 		parts := strings.SplitN(line, "=", 2)
 		if len(parts) != 2 {
-			return fmt.Errorf("неверный формат строки: %s", line)
+			return fmt.Errorf("invalid string format: %s", line)
 		}
 
 		key := strings.TrimSpace(parts[0])
@@ -32,7 +32,7 @@ func LoadEnvFile(filename string) error {
 
 		err = os.Setenv(key, value)
 		if err != nil {
-			return fmt.Errorf("ошибка при установке переменной окружения: %s", err)
+			return fmt.Errorf("couldn't set the environment variable: %s", err)
 		}
 	}
 

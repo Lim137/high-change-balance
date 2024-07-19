@@ -1,11 +1,12 @@
-package high_change_balance
+package handlers
 
 import (
+	"net/http"
+
 	httpresponse "balance-tracker/internal/adapters/http"
 	"balance-tracker/internal/logger/sl"
 	"balance-tracker/internal/services"
-	"net/http"
-	"os"
+	"balance-tracker/pkg/env"
 )
 
 type BalanceTrackerResponse struct {
@@ -13,10 +14,11 @@ type BalanceTrackerResponse struct {
 }
 
 func BalanceTrackerHandler(w http.ResponseWriter, r *http.Request) {
-	logger := sl.GetLogger(os.Getenv("ENV"))
+	environment := env.GetEnv("ENV", "prod")
+	logger := sl.GetLogger(environment)
 	if r.Method != http.MethodGet {
-		httpresponse.RespondWithError(w, http.StatusMethodNotAllowed, "метод запроса должен быть GET")
-		logger.Info("неверный метод запроса")
+		httpresponse.RespondWithError(w, http.StatusMethodNotAllowed, "request method must be GET")
+		logger.Info("invalid request method")
 		return
 	}
 	highChangeAddr, err := services.GetHighChangeAddress()
