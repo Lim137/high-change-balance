@@ -15,10 +15,11 @@ const (
 	baseURL = "https://go.getblock.io/"
 )
 
-func GetLatestBlock() (models.Block, error) {
+func GetBlockByNumber(number string) (models.Block, error) {
+	const op = "api.GetBlockByNumber"
 	apiKey := os.Getenv("API_KEY")
 	url := fmt.Sprintf("%s%s", baseURL, apiKey)
-	reqBody := fmt.Sprintf(`{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest", true],"id":1}`)
+	reqBody := fmt.Sprintf(`{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["%s", true],"id":"getblock.io"}`, number)
 	resp, err := http.Post(url, "application/json", strings.NewReader(reqBody))
 	if err != nil {
 		//fmt.Println("не удалось получить ответ от api: ", err)
@@ -32,13 +33,38 @@ func GetLatestBlock() (models.Block, error) {
 	}
 	var result struct {
 		Jsonrpc string       `json:"jsonrpc"`
-		ID      int          `json:"id"`
+		ID      string       `json:"id"`
 		Result  models.Block `json:"result"`
 	}
 
 	if err = json.Unmarshal(body, &result); err != nil {
 		//fmt.Println("не удалось распарсить ответ от api: ", err)
 		return models.Block{}, errors.New(fmt.Sprintf("не удалось распарсить ответ от api: %v", err))
+	}
+	return result.Result, nil
+}
+
+func GetLatestBlockNumber() (string, error) {
+	const op = "api.GetLatestBlockNumber"
+	apiKey := os.Getenv("API_KEY")
+	url := fmt.Sprintf("%s%s", baseURL, apiKey)
+	reqBody := fmt.Sprintf(`{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":"getblock.io"}`)
+	resp, err := http.Post(url, "application/json", strings.NewReader(reqBody))
+	if err != nil {
+		return "", errors.New(fmt.Sprintf("не удалось получить ответ от api: %v", err))
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", errors.New(fmt.Sprintf("не удалось прочитать ответ от api: %v", err))
+	}
+	var result struct {
+		Jsonrpc string `json:"jsonrpc"`
+		ID      string `json:"id"`
+		Result  string `json:"result"`
+	}
+	if err = json.Unmarshal(body, &result); err != nil {
+		return "", errors.New(fmt.Sprintf("не удалось распарсить ответ от api: %v", err))
 	}
 	return result.Result, nil
 }
