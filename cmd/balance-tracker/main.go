@@ -17,7 +17,14 @@ func main() {
 		log.Fatalf("ошибка загрузки .env файла: %s", err)
 	}
 	port := os.Getenv("PORT")
-	logger := sl.GetLogger(os.Getenv("ENV"))
+	if port == "" {
+		port = "8080"
+	}
+	projEnv := os.Getenv("ENV")
+	if projEnv == "" {
+		projEnv = "prod"
+	}
+	logger := sl.GetLogger(projEnv)
 	logger.Info("starting app", slog.Any("port", port), slog.Any("env", os.Getenv("ENV")))
 	go app.New(port)
 	logger.Info("app started")
