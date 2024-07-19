@@ -5,6 +5,9 @@ LAUNCHING
 ```
 go run cmd/balance-tracker/main.go
 ```
+3. Make GET request to the /getaddr route (for example http://localhost:8080/getaddr)
+
+
 .env example
 ---
 ```
