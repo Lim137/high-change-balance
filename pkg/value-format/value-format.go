@@ -16,7 +16,7 @@ func GetInt64Value(value string) (int64, error) {
 	const op = "value-format.GetInt64Value"
 	valueInt, err := strconv.ParseInt(TrimValuePrefix(value), 16, 64)
 	if err != nil {
-		return 0, errors.New(fmt.Sprintf("функция: %s ошибка при преобразовании адреса: %v", op, err.Error()))
+		return 0, errors.New(fmt.Sprintf("функция: %s; ошибка при преобразовании адреса: %v", op, err.Error()))
 	}
 	return valueInt, nil
 }

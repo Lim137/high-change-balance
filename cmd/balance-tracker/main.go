@@ -2,9 +2,13 @@ package main
 
 import (
 	"balance-tracker/internal/app"
+	"balance-tracker/internal/logger/sl"
 	"balance-tracker/pkg/env"
 	"log"
+	"log/slog"
 	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
@@ -13,9 +17,12 @@ func main() {
 		log.Fatalf("ошибка загрузки .env файла: %s", err)
 	}
 	port := os.Getenv("PORT")
-	app.New(port)
-	//value1 := os.Getenv("API_KEY")
-	//value2 := os.Getenv("TEST")
-	//fmt.Println("API_KEY:", value1)
-	//fmt.Println("TEST:", value2)
+	logger := sl.GetLogger(os.Getenv("ENV"))
+	logger.Info("starting app", slog.Any("port", port), slog.Any("env", os.Getenv("ENV")))
+	go app.New(port)
+	logger.Info("app started")
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
+	sign := <-stop
+	logger.Info("app stopped", slog.Any("signal", sign.String()))
 }
