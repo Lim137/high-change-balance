@@ -12,7 +12,7 @@ func GetHighChangeAddress() (string, error) {
 	}
 	changes := make([]BalanceChange, 0, len(balanceChanges))
 	for address, change := range balanceChanges {
-		changes = append(changes, BalanceChange{Address: address, Change: change})
+		changes = append(changes, BalanceChange{Address: address, Change: *change})
 	}
 
 	sort.Slice(changes, func(i, j int) bool {
